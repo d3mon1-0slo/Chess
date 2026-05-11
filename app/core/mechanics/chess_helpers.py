@@ -1,12 +1,12 @@
 
 
 
-from app.pieces.pawn import PAWN
-from app.pieces.rook import ROOK
-from app.pieces.horse import HORSE
-from app.pieces.bishop import BISHOP
-from app.pieces.queen import QUEEN
-from app.pieces.king import KING
+from pieces.pawn import PAWN
+from pieces.rook import ROOK
+from pieces.horse import HORSE
+from pieces.bishop import BISHOP
+from pieces.queen import QUEEN
+from pieces.king import KING
 
 
 pawn = PAWN()
