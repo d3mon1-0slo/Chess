@@ -81,7 +81,8 @@ async def end_game(room_id: str, payload: dict = None):
 
     await broadcast(room_id, {
         "type": "game_over",
-        "winner": winner,
+        "reason": "manual",
+        "winner": None,
         "board": room_data["board"]
     })
 
