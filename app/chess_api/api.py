@@ -29,13 +29,17 @@ async def check_user_move():
 
 @router.get("/board/{room_id}")
 async def get_board(room_id: str):
+
     room_data = rooms.get(room_id)
 
     if not room_data:
-        raise HTTPException(status_code=404, detail="Room not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Room not found"
+        )
 
     return {
-        "board": room_data["board"]["board"],
+        "board": room_data["board"],
         "turn": room_data["turn"]
     }
 
@@ -184,7 +188,6 @@ async def move_piece(room_id: str, request: MoveRequest):
         "type": "move",
         "from": request.origin,
         "to": request.endpoint,
-        "piece": request.piece,
         "turn": new_turn
     })
 
