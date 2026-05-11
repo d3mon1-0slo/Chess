@@ -181,10 +181,12 @@ async def move_piece(room_id: str, request: MoveRequest):
         }
 
     await broadcast(room_id, {
-            "type": "move",
-            "board": board_state,
-            "turn": new_turn
-        })
+        "type": "move",
+        "from": request.origin,
+        "to": request.endpoint,
+        "piece": request.piece,
+        "turn": new_turn
+    })
 
     return {
             "success": True,
