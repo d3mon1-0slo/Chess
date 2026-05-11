@@ -35,7 +35,7 @@ async def get_board(room_id: str):
         raise HTTPException(status_code=404, detail="Room not found")
 
     return {
-        "board": room_data["board"],
+        "board": room_data["board"]["board"],
         "turn": room_data["turn"]
     }
 
@@ -56,7 +56,7 @@ async def reset_game(room_id: str):
 
     await broadcast(room_id, {
         "type": "new_game",
-        "board": board_data,
+        "board": board_data["board"],
         "turn": "w"
     })
 
