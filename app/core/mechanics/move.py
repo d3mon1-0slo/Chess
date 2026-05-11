@@ -1,7 +1,6 @@
 from .chess_helpers import ChessHelpers
 
 
-
 class ChessMove:
     '''
         - Return board status / postions
@@ -10,11 +9,9 @@ class ChessMove:
     '''
     def __init__(self):
         self.chess_helpers = ChessHelpers()
-        self.turn = "w"
-        self.invalid = False
 
     # Entry point
-    async def move(self, coordinates, board):
+    async def move(self, coordinates, board, turn):
         '''
             - Convert STR to INT
             - check if position exist
@@ -28,30 +25,51 @@ class ChessMove:
         convert_origin = self.chess_helpers.str_to_index(origin)
         convert_endpoint = self.chess_helpers.str_to_index(endpoint)
 
-        # origin and endpoint becomes tuple
-        # validate
-        print(self.turn)
-        _isValid_piece = self.chess_helpers.check_piece(convert_origin, board)
-        if not _isValid_piece:
-            return board
-        else:
-            if _isValid_piece[0] == self.turn:
-                # valid_new_position = self.chess_helpers.check_destination(_isValid_piece, convert_endpoint, board)
-                valid_piece_move = self.chess_helpers.validate_move(_isValid_piece, board, convert_origin, convert_endpoint)
+        piece = self.chess_helpers.check_piece(convert_origin, board)
 
+        if not piece:
+            return board, turn, False, None
 
-                print(self.invalid)
-                if valid_piece_move == True:
-                    if self.turn == 'w':
-                        self.turn = 'b'
-                    else:
-                        self.turn = "w"
-                    
-                    updated_board = self.chess_helpers._update_board(convert_origin,convert_endpoint, _isValid_piece, board)
-                    self.invalid = True
-                    return updated_board
-                else:
-                    # invalid move
-                    self.invalid = False
+        if piece[0] != turn:
+            return board, turn, False, None
 
-            return board
+        valid_piece_move = self.chess_helpers.validate_move(
+            piece,
+            board,
+            convert_origin,
+            convert_endpoint
+        )
+
+        if valid_piece_move == True:
+
+            updated_board = self.chess_helpers._update_board(
+                convert_origin,
+                convert_endpoint,
+                piece,
+                board
+            )
+
+            new_turn = "b" if turn == "w" else "w"
+
+            # Check if a king was captured
+            winner = self.check_king_captured(updated_board)
+
+            return updated_board, new_turn, True, winner
+
+        # invalid move
+        return board, turn, False, None
+
+    def check_king_captured(self, board_state):
+        board = board_state["board"] if isinstance(board_state, dict) else board_state
+
+        white_king = False
+        black_king = False
+
+        for row in board:
+            for cell in row:
+                if cell == "wk": white_king = True
+                if cell == "bk": black_king = True
+
+        if not white_king: return "b"  # black wins
+        if not black_king: return "w"  # white wins
+        return None
