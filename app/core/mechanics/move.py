@@ -1,3 +1,7 @@
+from .chess_helpers import ChessHelpers
+
+
+
 class ChessMove:
     '''
         - Return board status / postions
@@ -6,6 +10,8 @@ class ChessMove:
     '''
     def __init__(self):
         self.chess_helpers = ChessHelpers()
+        self.turn = "w"
+        self.invalid = False
 
     # Entry point
     async def move(self, coordinates, board):
@@ -15,60 +21,37 @@ class ChessMove:
             - if true then move the piece 
             - if not == invalid ./.
         '''
+
         origin = coordinates.origin
         endpoint = coordinates.endpoint
+
         convert_origin = self.chess_helpers.str_to_index(origin)
         convert_endpoint = self.chess_helpers.str_to_index(endpoint)
 
         # origin and endpoint becomes tuple
         # validate
-        _isValid = self.chess_helpers.check_piece(convert_origin, board)
-        print(_isValid)
-        if _isValid:
-            updated_board = self.chess_helpers._update_board(convert_endpoint, _isValid, board)
-            return updated_board
-
-        return board
-
-
-class ChessHelpers:
-    # convert yung String input into coordinates
-
-    def str_to_index(self, pos: str):
-        '''
-            - takes String as input / chess move: e2
-            - split the input so pos[0] = e, pos[1] = 2
-            - Convert the letter E into unicode using ord() function 
-            - sa Unicode letter A == 97 so gagawin natin minus lang natin yung 
-            - E sa A. ord('e') - ord('a') 
-
-            - for 2nd character naman ifo-force lang natin na maging interger yung string 
-            - since integer naman talaga siya to begin with 
-            - so int(pos[1])
-        '''
-        column = ord(pos[0]) - ord('a')
-        row = 8 - int(pos[1])
-        return row, column
-
-    def check_piece(self, coordinate: tuple, board: list) -> list:
-        print(coordinate)
-        '''
-            takes the converted position then sanitize it
-            returns the exact position sa array 
-        '''
-        piece = board[coordinate[0]][coordinate[1]]
-
-        # if piece di nag eexist
-        if piece == "" or piece is None:
-            return False
+        print(self.turn)
+        _isValid_piece = self.chess_helpers.check_piece(convert_origin, board)
+        if not _isValid_piece:
+            return board
         else:
-            # remove yung old position ng piece
-            board[coordinate[0]][coordinate[1]] = ""
-            return piece
+            if _isValid_piece[0] == self.turn:
+                # valid_new_position = self.chess_helpers.check_destination(_isValid_piece, convert_endpoint, board)
+                valid_piece_move = self.chess_helpers.validate_move(_isValid_piece, board, convert_origin, convert_endpoint)
 
-    def _update_board(self, new_coordinate: tuple, piece, board: list):
-        # place piece sa new coordinate
-        board[new_coordinate[0]][new_coordinate[1]] = piece
 
-        # update yung board
-        return board
+                print(self.invalid)
+                if valid_piece_move == True:
+                    if self.turn == 'w':
+                        self.turn = 'b'
+                    else:
+                        self.turn = "w"
+                    
+                    updated_board = self.chess_helpers._update_board(convert_origin,convert_endpoint, _isValid_piece, board)
+                    self.invalid = True
+                    return updated_board
+                else:
+                    # invalid move
+                    self.invalid = False
+
+            return board
