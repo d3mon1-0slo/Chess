@@ -40,9 +40,58 @@ async def get_board(room_id: str):
     }
 
 
-@router.post("/reset")
-async def reset_board():
-    return await board.reset_game()
+@router.post("/reset/{room_id}")
+async def reset_game(room_id: str):
+
+    room_data = rooms.get(room_id)
+
+    if not room_data:
+        raise HTTPException(status_code=404, detail="Room not found")
+
+    initial_board = await board.reset_game()
+    board_data = initial_board.get("board") if isinstance(initial_board, dict) else initial_board
+
+    room_data["board"] = board_data
+    room_data["turn"] = "w"
+
+    await broadcast(room_id, {
+        "type": "new_game",
+        "board": board_data,
+        "turn": "w"
+    })
+
+    return {
+        "success": True,
+        "board": board_data,
+        "turn": "w"
+    }
+
+@router.post("/end_game/{room_id}")
+async def end_game(room_id: str, payload: dict = None):
+
+    room_data = rooms.get(room_id)
+
+    if not room_data:
+        raise HTTPException(status_code=404, detail="Room not found")
+
+    winner = None
+
+    if payload:
+        winner = payload.get("winner")
+
+    await broadcast(room_id, {
+        "type": "game_over",
+        "winner": winner,
+        "board": room_data["board"]
+    })
+
+    # optional: lock room
+    room_data["turn"] = None
+
+    return {
+        "success": True,
+        "winner": winner
+    }
 
 
 @router.post("/create_room")
