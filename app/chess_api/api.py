@@ -85,7 +85,6 @@ async def end_game(room_id: str, payload: dict = None):
         "board": room_data["board"]
     })
 
-    # optional: lock room
     room_data["turn"] = None
 
     return {
