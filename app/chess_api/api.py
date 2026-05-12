@@ -70,6 +70,21 @@ async def reset_game(room_id: str):
         "turn": "w"
     }
 
+@router.post("/end-match/{room_id}")
+async def end_match(room_id: str):
+    room_data = rooms.get(room_id)
+
+    if not room_data:
+        raise HTTPException(status_code=404, detail="Room not found")
+
+    await broadcast(room_id, {
+        "type": "host_ended"
+    })
+
+    rooms.pop(room_id, None) 
+
+    return {"success": True}
+
 @router.post("/end_game/{room_id}")
 async def end_game(room_id: str, payload: dict = None):
 
