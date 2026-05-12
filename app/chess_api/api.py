@@ -60,7 +60,7 @@ async def reset_game(room_id: str):
 
     await broadcast(room_id, {
         "type": "new_game",
-        "board": board_data["board"],
+        "board": board_data,
         "turn": "w"
     })
 
