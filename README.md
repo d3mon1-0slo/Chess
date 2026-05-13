@@ -172,13 +172,5 @@ The **New Game** button calls `POST /api/reset` and re-renders the board from th
 
 ## TODO
 
-### In Progress
-
-- [ ] **Per-piece movement rules** — each piece in `app/pieces/` should validate its own legal moves (pawn forward only, knight L-shape, bishop diagonal, rook straight, queen both, king one step)
-- [ ] **Capture enemy pieces** — when a piece moves to a square occupied by an opponent, the enemy piece is removed and replaced by the moving piece
-
-### Upcoming Features
-
-- [ ] **AI opponent** — integrate an LLM to play against solo, AI decides and sends moves via the existing `/api/move` endpoint
-- [ ] **Authentication** — login and registration so players have persistent accounts
-- [ ] **Multiplayer** — two authenticated players can join the same game session and play against each other in real time (WebSocket)
+- [] King "Check" functionality.
+- [] Chat with opponent.
